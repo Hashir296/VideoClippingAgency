@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+  background-color: #070709;
+}
+
+body {
+  background-color: #070709;
+  color: #A3A3B0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+
+::selection {
+  background: #D4AF37;
+  color: #070709;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #070709;
+}
+::-webkit-scrollbar-thumb {
+  background: #23232D;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@layer components {
+  .hairline {
+    @apply border border-white/[0.08];
+  }
+  .surface {
+    @apply rounded-[28px] bg-[#121217] shadow-lift hairline backdrop-blur-xl transition-all duration-300;
+  }
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[#C5A880];
+  }
+  .display {
+    @apply font-serif font-medium tracking-tight text-[#F5F3EF];
+  }
+  .h2 {
+    @apply font-serif text-[2.6rem] font-medium leading-[1.04] tracking-tight text-[#F5F3EF] md:text-6xl;
+  }
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3.5 text-sm font-semibold tracking-wide text-[#08080A]
+      transition-all duration-300 hover:bg-[#F3E5C8] hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+  }
+  .btn-ink:hover {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+  }
+  .btn-line {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.02] px-7 py-3.5 text-sm font-medium
+      tracking-wide text-[#F5F3EF] transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 hover:scale-[1.02] active:scale-[0.98];
+  }
+  .field {
+    @apply w-full rounded-xl border border-white/10 bg-[#16161D] px-4 py-3.5 text-sm text-[#F5F3EF] placeholder-neutral-500
+      outline-none transition-all duration-200 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20;
+  }
+  .label {
+    @apply mb-2 block font-mono text-[10.5px] font-medium uppercase tracking-[0.16em] text-neutral-400;
+  }
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .045 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.gridlines {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+}
+
+/* Custom luxury dark range slider styling */
+input[type="range"].luxury-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #22222C;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+input[type="range"].luxury-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #D4AF37;
+  border: 2px solid #08080A;
+  cursor: grab;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+input[type="range"].luxury-range::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+  background: #F3E5C8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
