@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Ensure database connection for all requests (crucial for Serverless Vercel)
+// Auto-connect database for all requests
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -34,27 +34,32 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.get('/api/health', (req, res) =>
+const healthHandler = (req, res) =>
   res.json({
     ok: true,
     db: mongoose.connection.readyState === 1 ? 'up' : 'down (fallback active)',
     timestamp: new Date().toISOString(),
-  })
-);
+  });
 
+app.get('/api/health', healthHandler);
+app.get('/health', healthHandler);
+
+// Mount routes at both /api and root to support flexible Vercel rewrites
 app.use('/api', routes);
+app.use('/', routes);
+
 app.use(notFound);
 app.use(errorHandler);
 
-// Standalone listener for local dev / non-serverless
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => console.log(`[api] Creator Growth System API running on http://localhost:${PORT}`));
+// Listen on configured port (required for Vercel Express service & local dev)
+app.listen(PORT, () => {
+  console.log(`[api] Creator Growth System API running on port ${PORT}`);
   connectDB()
     .then(() => seedMongoIfEmpty().catch(() => {}))
     .catch((err) => {
       console.warn('[db] MongoDB offline or unreachable:', err.message);
-      console.log('[db] Seamless in-memory & local cache fallback active. All endpoints functional.');
+      console.log('[db] In-memory & local cache fallback active. All endpoints functional.');
     });
-}
+});
 
 export default app;
