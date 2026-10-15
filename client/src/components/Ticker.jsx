@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   motion,
   useAnimationFrame,
@@ -26,34 +26,40 @@ const defaultPhrases = [
 
 /**
  * Ultra-Smooth Infinite Kinetic Editorial Ticker (Dark Luxury Edition):
- * Glides with silky smooth frame pacing, clamped delta, and gentle scroll velocity boost.
+ * Glides at a slow, calm, majestic speed with frame-rate independence
+ * and subtle scroll reactivity.
  */
-export default function Ticker({ baseVelocity = -1.2, customPhrases = null }) {
+export default function Ticker({ baseVelocity = -1.0, customPhrases = null }) {
   const reduce = useReducedMotion();
   const baseX = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
 
-  // Gentle spring dampening for silky acceleration
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 40, stiffness: 200, mass: 0.5 });
-  const velocityFactor = useTransform(smoothVelocity, [-1500, 0, 1500], [-2.5, 0, 2.5], { clamp: true });
+  // Gentle spring dampening for smooth acceleration on scroll
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 200, mass: 0.5 });
+  const velocityFactor = useTransform(smoothVelocity, [-1200, 0, 1200], [-1.5, 0, 1.5], { clamp: true });
 
-  const direction = useRef(1);
   const x = useTransform(baseX, (v) => `${wrap(-25, 0, v)}%`);
 
   useAnimationFrame((_, delta) => {
     if (reduce) return;
 
-    // Clamp delta to prevent jerky jumps after background tab inactive
+    // Clamp delta to prevent jerky jumps after tab sleep
     const safeDelta = Math.min(delta, 32);
-    let speed = baseVelocity * (safeDelta / 1000) * 12;
+
+    // Calm, slow luxury movement speed (normalized per second)
+    // -1.0% per second means one full loop of phrases takes ~25 seconds
+    let speed = (baseVelocity * (safeDelta / 1000));
+
+    // Slow down to gentle glide on hover for readability
+    if (isHovered) {
+      speed *= 0.35;
+    }
+
+    // Subtle scroll responsiveness
     const boost = velocityFactor.get();
-
-    if (boost > 0.1) direction.current = 1;
-    else if (boost < -0.1) direction.current = -1;
-
-    // Apply smooth acceleration without sudden inversions
-    const extra = Math.min(Math.abs(boost) * 0.8, 3);
+    const extra = Math.min(Math.abs(boost) * 0.25, 1.0);
     speed = speed * (1 + extra);
 
     baseX.set(baseX.get() + speed);
@@ -84,7 +90,11 @@ export default function Ticker({ baseVelocity = -1.2, customPhrases = null }) {
   );
 
   return (
-    <div className="relative overflow-hidden border-y border-white/10 bg-[#0B0B0F]/90 py-6 md:py-8 backdrop-blur-md">
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative overflow-hidden border-y border-white/10 bg-[#0B0B0F]/90 py-6 md:py-8 backdrop-blur-md cursor-default"
+    >
       {/* Edge fade gradient masks for smooth luxury blend */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-[#070709] via-[#070709]/80 to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-[#070709] via-[#070709]/80 to-transparent" />
